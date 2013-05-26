@@ -1,0 +1,28 @@
+---
+- hosts: default
+  user: vagrant
+  sudo: yes
+  tasks:
+  - name: ensure apache is at the latest version
+    apt: pkg=apache2 state=latest update_cache=yes
+  - name: ensure apache-utils is at the latest version
+    apt: pkg=apache2-utils state=latest update_cache=yes
+  - name: ensure openssl is at the latest version
+    apt: pkg=openssl state=latest update_cache=yes
+  - name: ensure ssl-cert is at the latest version
+    apt: pkg=ssl-cert state=latest update_cache=yes
+  - name: ensure apache is running
+    service: name=apache2 state=started
+  - name: ensure apache modules are enabled
+    command: sudo a2enmod alias autoindex cache deflate dir expires headers mime negotiation rewrite setenvif ssl status
+    notify:
+      - restart apache
+  - name: copy vhost config
+    #copy: src=<> dest=<> owner=root group=root mode=0644
+#  - name: write the apache config file
+#    action: template src=/srv/httpd.j2 dest=/etc/httpd.conf
+#    notify:
+#    - restart apache
+  handlers:
+    - name: restart apache
+      service: name=apache2 state=restarted
