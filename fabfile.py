@@ -24,7 +24,7 @@ qemu_host_ssh_port = '5555'
 qemu_guest_ssh_port = '22'
 qemu_netdev_options = 'user,id=user.0,hostfwd=tcp::%s-:%s' % (qemu_host_ssh_port, qemu_guest_ssh_port)
 qemu_generic_options = '-enable-kvm -serial null -parallel null -display none -vga none -daemonize'
-qemu_system_cmd = '%s %s -name %s -device %s -netdev %s -monitor %s -boot d %s' % (qemu_system_cmd,
+qemu_cmd = '%s %s -name %s -device %s -netdev %s -monitor %s -boot d %s' % (qemu_system_cmd,
                                                                             qemu_generic_options,
                                                                             qemu_vm_name,
                                                                             qemu_device_options,
@@ -60,11 +60,11 @@ def vm(action='start'):
             puts(green('Unpacking base box.'))
             decompress_cmd = 'bunzip2 -q %s' % qemu_base_box
             local(decompress_cmd)
-            nfs(cmd='start')
-            vm(action='start')
-            sleep(7)
-            nfs(cmd='mount')
-            vm(action='provision')
+        nfs(cmd='start')
+        vm(action='start')
+        sleep(10)
+        nfs(cmd='mount')
+        vm(action='provision')
     elif action == 'provision':
         with hide('running', 'stderr', 'stdout', 'warnings'):
             local('ansible -v wheezy64 -a "apt-get -y install python-apt" -u vagrant -s -i ansible/host --private-key vagrant.key')
