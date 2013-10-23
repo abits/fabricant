@@ -3,20 +3,55 @@
   user: vagrant
   sudo: yes
   tasks:
-  - name: ensure apache is at the latest version
-    apt: pkg=apache2 state=latest update_cache=yes
-  - name: ensure apache-utils is at the latest version
-    apt: pkg=apache2-utils state=latest update_cache=yes
-  - name: ensure openssl is at the latest version
-    apt: pkg=openssl state=latest update_cache=yes
-  - name: ensure ssl-cert is at the latest version
-    apt: pkg=ssl-cert state=latest update_cache=yes
-  - name: ensure apache is running
-    service: name=apache2 state=started
+  - include: sdk.yml
+  - name: apt update
+    apt: update_cache=yes
+  - name: install necessary packages
+    action: apt pkg=$item state=latest
+    with_items:
+      - apache2
+      - apache2-utils
+      - openssl
+      - ssl-cert
+      - libapache2-mod-php5
+      - php5
+      - php-apc
+      - php5-mysql
+      - php5-gd
+      - php5-intl
+      - php-pear
+      - php5-xdebug
+      - php5-mcrypt
+      - php5-cli
+      - php5-curl
+      - php5-dev
+      - php5-imagick
+      - php5-xsl
+      - graphviz 
+      - mysql-server
+      - mysql-client
+      - python-mysqldb
   - name: ensure apache modules are enabled
-    command: sudo a2enmod alias autoindex cache deflate dir expires headers mime negotiation rewrite setenvif ssl status
+    command: sudo a2enmod $item creates=/etc/apache2/mods-enabled/$item.load
+    with_items:
+      - alias 
+      - autoindex 
+      - cache 
+      - deflate 
+      - dir 
+      - expires 
+      - headers 
+      - mime 
+      - negotiation 
+      - rewrite 
+      - setenvif 
+      - ssl 
+      - status
+      - php5
     notify:
       - restart apache
+  - name: 
+    mysql_user: name=wwwuser password=cha0s priv=*.*:ALL state=present
 #  - name: copy vhost config
     #copy: src=<> dest=<> owner=root group=root mode=0644
 #  - name: write the apache config file

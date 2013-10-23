@@ -20,9 +20,18 @@ qemu_monitor_host = '127.0.0.1'
 qemu_monitor_port = '4444'
 qemu_monitor_address = '%s:%s' % (qemu_monitor_host, qemu_monitor_port)
 qemu_monitor_options = 'telnet:%s,server,nowait' % qemu_monitor_address
-qemu_host_ssh_port = '5555'
-qemu_guest_ssh_port = '22'
-qemu_netdev_options = 'user,id=user.0,hostfwd=tcp::%s-:%s' % (qemu_host_ssh_port, qemu_guest_ssh_port)
+qemu_port_forwards = {
+    '5555': '22',
+    '8080': '80',
+    '9933': '993'
+}
+qemu_fw_parameter = ''
+for host, guest in qemu_port_forwards.iteritems():
+    mapping = ',hostfwd=tcp::%s-:%s' % (host, guest)
+    qemu_fw_parameter += mapping
+    if guest == '22':
+        qemu_host_ssh_port = host
+qemu_netdev_options = 'user,id=user.0%s' % qemu_fw_parameter
 qemu_generic_options = '-enable-kvm -serial null -parallel null -display none -vga none -daemonize'
 qemu_cmd = '%s %s -name %s -device %s -netdev %s -monitor %s -boot d %s' % (qemu_system_cmd,
                                                                             qemu_generic_options,
@@ -31,23 +40,24 @@ qemu_cmd = '%s %s -name %s -device %s -netdev %s -monitor %s -boot d %s' % (qemu
                                                                             qemu_netdev_options,
                                                                             qemu_monitor_options,
                                                                             qemu_img)
-shared_folders = [('/home/chm/temp/wheezy-kvm', '/home/vagrant/tmp'), ('/home/chm/temp/wheezy-kvm/www', '/srv/www/sdk')]
+shared_folders = [('/home/chm/temp/fabricant', '/home/vagrant/fabricant'), ('/home/chm/temp/fabricant/www', '/srv/www/sdk')]
 qemu_fab_user = 'vagrant'
 qemu_fab_group = 'vagrant'
 qemu_fab_host = '%s@localhost:%s' % (qemu_fab_user, qemu_host_ssh_port)
 
 env.key_filename = ["vagrant.key"]
 
+
 @task
 def vm(action='start'):
     if action == 'start':
         local(qemu_cmd)
-        msg = 'Started virtual machine %s. Mapping guest port %s to host port %s. Telnet monitor on: %s.' % (qemu_vm_name,
-                                                                                                             qemu_guest_ssh_port,
-                                                                                                             qemu_host_ssh_port,
-                                                                                                             qemu_monitor_address)
+        msg = 'Started virtual machine %s. Telnet monitor on: %s.' % (qemu_vm_name,
+                                                                      qemu_monitor_address)
         puts(green(msg))
-
+        for host, guest in qemu_port_forwards.iteritems():
+            msg = 'Mapping guest port %5s to host port %5s.' % (guest, host)
+            puts(green(msg))
     elif action == 'stop':
         monitor = telnetlib.Telnet()
         monitor.open(qemu_monitor_host, qemu_monitor_port)
