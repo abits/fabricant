@@ -1,0 +1,21 @@
+- name: ensure php component is at the latest version
+  action: apt pkg=$item state=latest
+  with_items:
+    - libapache2-mod-php5
+    - php5
+    - php-apc
+    - php5-mysql
+    - php5-gd
+    - php5-intl
+    - php-pear
+    - php5-xdebug
+    - php5-mcrypt
+    - php5-cli
+    - php5-curl
+    - php5-dev
+    - php5-imagick
+    - php5-xsl
+    - graphviz 
+- name: ensure mod php is enabled
+  command: sudo a2enmod php5
+

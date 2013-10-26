@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 #!/bin/env python2
 
-from fabric.api import *
-from fabric.utils import *
-from fabric.colors import *
-import telnetlib
-import os
-from time import sleep
+from fabricant.settings import Settings
+
+def run_init():
 
 
+if __name__ == '__main__':
+    settings = Settings()
+    if settings.action == 'init':
+        run_init()
+    print settings.action
+    print settings.options
