@@ -9,6 +9,8 @@ class Settings(object):
     action = None
     options_file = 'fabricant.yml'
     options = None
+    fabricant_dir = '.fabricant'
+    base_boxes_dir = os.path.join(fabricant_dir, 'base')
 
 
     qemu_system_cmd = '/usr/bin/qemu-system-x86_64'
@@ -52,6 +54,7 @@ class Settings(object):
         parser.add_argument("action", help="action to run")
         parser.add_argument('--file', '-f', action="store", dest=self.options_file, help='Define default options file.')
         args = parser.parse_args()
+        self.action = args.action
         self._load_options_from(self.options_file)
 
 

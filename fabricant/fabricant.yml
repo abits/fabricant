@@ -1,2 +1,3 @@
 box:
-    base_url: 'http://files.codewways.org/wheezy64.qbox'
+  name: wheezy64
+  base_url: 'http://files.codeways.org/wheezy64.qbox'

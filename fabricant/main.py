@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 #!/bin/env python2
 
-from fabricant.settings import Settings
+from fabricant import settings
+from fabricant.services import Box
+
 
 def run_init():
-
+    box = Box()
+    box.fetch_base_box()
 
 if __name__ == '__main__':
-    settings = Settings()
     if settings.action == 'init':
         run_init()
-    print settings.action
-    print settings.options
