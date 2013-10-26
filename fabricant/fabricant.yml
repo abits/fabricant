@@ -1,3 +1,4 @@
 box:
-  name: wheezy64
+  name: 'wheezy64'
   base_url: 'http://files.codeways.org/wheezy64.qbox'
+  md5: '4745674fc36ca6ac33c4f6981c419dad'
