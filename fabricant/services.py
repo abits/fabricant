@@ -30,6 +30,16 @@ class Box(object):
                 status = False
             return status
 
+    def unpack_box(self):
+        """Decompress box archive and move to VM folder."""
+#     dump_archive = BZ2File(archive_path, 'wb')
+#     try:
+#         for line in fileinput.input(local_db_dump_path):
+#           dump_archive.write(line)
+#     finally:
+#       dump_archive.close()
+        pass
+
     def fetch_base_box(self):
         """Retrieve and store base box locally for further use."""
         if not os.path.exists(self.box_stored):
